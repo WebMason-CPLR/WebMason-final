@@ -1,0 +1,6 @@
+@WebMason_final.Server_HostAddress = http://localhost:5224
+
+GET {{WebMason_final.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

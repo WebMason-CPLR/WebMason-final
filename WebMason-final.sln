@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebMason-final.Server", "WebMason-final.Server\WebMason-final.Server.csproj", "{0EA78FC1-EF28-4E83-8565-52BAC4FF7488}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "webmason-final.client", "webmason-final.client\webmason-final.client.esproj", "{5C058573-5DB8-481A-B3BF-32FA2419E6B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EA78FC1-EF28-4E83-8565-52BAC4FF7488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EA78FC1-EF28-4E83-8565-52BAC4FF7488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EA78FC1-EF28-4E83-8565-52BAC4FF7488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EA78FC1-EF28-4E83-8565-52BAC4FF7488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C058573-5DB8-481A-B3BF-32FA2419E6B9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FECE3AB-5B82-458B-BDB6-68898D7942E4}
+	EndGlobalSection
+EndGlobal
