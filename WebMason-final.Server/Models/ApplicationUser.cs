@@ -1,8 +1,10 @@
-﻿namespace WebMason_final.Server.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace WebMason_final.Server.Models
 {
-    public class ApplicationUser
+    public class ApplicationUser : IdentityUser<Guid>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }

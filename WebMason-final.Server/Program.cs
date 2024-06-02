@@ -1,18 +1,18 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebMason_final.Server.Data;
 using WebMason_final.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,6 +21,22 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// Ajoutez les services Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+// Configuration CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 // Configuration de l'authentification JWT
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
@@ -40,7 +56,7 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
@@ -48,19 +64,9 @@ builder.Services.AddAuthentication(options =>
 // Ajoutez le service de hachage de mot de passe
 builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
 
-// Ajoutez la configuration CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins",
-    builder =>
-    {
-        builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
-});
-
 var app = builder.Build();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -74,6 +80,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

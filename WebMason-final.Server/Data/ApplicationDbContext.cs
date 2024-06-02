@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebMason_final.Server.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebMason_final.Server.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -17,16 +20,14 @@ namespace WebMason_final.Server.Data
         public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<ServerOrder> ServerOrders { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<ServerOrder>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.User)
-                      .WithMany(u => u.ServerOrders)
-                      .HasForeignKey(e => e.UserId);
-            });
+            base.OnModelCreating(builder);
+
+            builder.Entity<ServerOrder>()
+                .HasOne(so => so.User)
+                .WithMany(u => u.ServerOrders)
+                .HasForeignKey(so => so.UserId);
         }
     }
 }

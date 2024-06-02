@@ -2,10 +2,10 @@
 {
     public class ServerOrder
     {
-        public int Id { get; set; } // Clé primaire
+        public Guid Id { get; set; } // Clé primaire
         public string ServerType { get; set; }
         public DateTime OrderDate { get; set; }
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
     }
 }

@@ -62,7 +62,7 @@ namespace WebMason_final.Server.Controllers
             }
 
             var orders = await _context.ServerOrders
-                .Where(o => o.UserId == int.Parse(userId))
+                .Where(o => o.UserId == Guid.Parse(userId))
                 .ToListAsync();
 
             return Ok(orders);

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ServerService } from '../../services/server.service';
 
 @Component({
   selector: 'app-home',
@@ -8,38 +9,57 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   servers: any[] = [];
+  loading: boolean = false;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private serverService: ServerService) { }
 
   ngOnInit(): void {
     this.servers = [
       {
         name: 'Basic Server',
         description: 'A basic server suitable for small projects.',
-        image: 'assets/images/basic-server.jpg'
+        image: 'assets/images/basic-server.png'
       },
       {
         name: 'Advanced Server',
         description: 'An advanced server for larger projects.',
-        image: 'assets/images/advanced-server.jpg'
+        image: 'assets/images/advanced-server.png'
       },
       {
         name: 'Pro Server',
         description: 'A professional server for enterprise solutions.',
-        image: 'assets/images/pro-server.jpg'
+        image: 'assets/images/pro-server.png'
       }
     ];
   }
 
   orderServer(server: any): void {
-    // Here you can handle the logic for ordering a server
-    // For example, navigate to an order page or call an order API
-    console.log(`Ordering server: ${server.name}`);
-    this.router.navigate(['/order'], { queryParams: { server: server.name } });
+    this.loading = true;
+    const config = {
+      UserId: 'some-user-id',  // Remplacez par l'ID utilisateur réel
+      MysqlRootPassword: 'rootpassword',
+      MysqlDatabase: 'wordpress',
+      MysqlUser: 'wpuser',
+      MysqlPassword: 'wppassword',
+      HostPort: 8080
+    };
+
+    this.serverService.deployWordpress(config).subscribe(
+      response => {
+        console.log('WordPress deployed successfully', response);
+        this.loading = false;
+        alert('WordPress deployed successfully');
+        // You can navigate to a different page if needed
+      },
+      error => {
+        console.error('Error deploying WordPress', error);
+        this.loading = false;
+        alert('Error deploying WordPress');
+      }
+    );
   }
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
 }
-

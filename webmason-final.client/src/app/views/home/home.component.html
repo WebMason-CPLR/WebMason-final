@@ -5,7 +5,11 @@
       <p class="lead">Select from the different types of servers we offer.</p>
     </div>
   </div>
-  <div class="row mt-4">
+  <div *ngIf="loading" class="text-center">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Deploying server, please wait...</p>
+  </div>
+  <div *ngIf="!loading" class="row mt-4">
     <div class="col-md-4" *ngFor="let server of servers">
       <div class="card">
         <img class="card-img-top" [src]="server.image" alt="Server image">
@@ -18,4 +22,3 @@
     </div>
   </div>
 </div>
-
