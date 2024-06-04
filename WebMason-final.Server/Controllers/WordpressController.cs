@@ -20,6 +20,7 @@ namespace WebMason_final.Server.Controllers
     {
         private readonly DockerClient _dockerClient;
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<WordpressController> _logger;
 
         public WordpressController(ApplicationDbContext context)
         {
@@ -111,6 +112,10 @@ namespace WebMason_final.Server.Controllers
                 });
 
                 await _dockerClient.Containers.StartContainerAsync(mysqlContainer.ID, new ContainerStartParameters());
+
+                // Réinitialisez la liste des conteneurs pour le conteneur WordPress
+                containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters { All = true });
+
 
                 // Réinitialisez le compteur pour le conteneur WordPress
                 counter = 1;
@@ -232,11 +237,12 @@ namespace WebMason_final.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error retrieving containers");
                 return StatusCode(500, new { message = "Error retrieving containers", error = ex.Message });
             }
         }
 
-        [HttpDelete("delete/{containerId}")]
+        [HttpGet("delete/{containerId}")]
         public async Task<IActionResult> DeleteContainer(Guid containerId)
         {
             try

@@ -22,6 +22,7 @@ export class ContainersComponent implements OnInit {
   loadContainers(): void {
     this.serverService.getUserContainers().subscribe(
       data => {
+        console.log(data);
         this.containers = data;
       },
       error => {
@@ -31,6 +32,10 @@ export class ContainersComponent implements OnInit {
   }
 
   deleteContainer(containerId: string): void {
+    for (let container of this.containers) {
+      console.log(container);
+    }
+    
     this.serverService.deleteContainer(containerId).subscribe(
       response => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Container deleted successfully' });
