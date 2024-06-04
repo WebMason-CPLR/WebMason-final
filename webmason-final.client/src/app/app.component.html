@@ -2,9 +2,11 @@
 <p-menubar [model]="items">
   <ng-template pTemplate="start">
     <img src="../assets/logo.png" alt="logo" height="40" class="p-mr-2">
+    <a routerLink="/containers" routerLinkActive="active">Mes services</a>
   </ng-template>
   <ng-template pTemplate="end">
     <button *ngIf="isLoggedIn()" pButton type="button" label="Logout" icon="pi pi-power-off" (click)="logout()"></button>
+    <button *ngIf="isLoggedIn()" pButton type="button" label="Delete All Containers" icon="pi pi-trash" (click)="deleteAllContainers()"></button>
   </ng-template>
 </p-menubar>
 <router-outlet></router-outlet>

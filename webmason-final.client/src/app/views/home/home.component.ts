@@ -16,17 +16,17 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.servers = [
       {
-        name: 'Basic Server',
-        description: 'A basic server suitable for small projects.',
+        name: 'Serveur Wordpress',
+        description: 'Un serveur simple deployant un wordpress et un mysql prêt à la configuration',
         image: 'assets/images/basic-server.png'
       },
       {
-        name: 'Advanced Server',
+        name: 'Serveur Odoo',
         description: 'An advanced server for larger projects.',
         image: 'assets/images/advanced-server.png'
       },
       {
-        name: 'Pro Server',
+        name: 'Serveur redmine',
         description: 'A professional server for enterprise solutions.',
         image: 'assets/images/pro-server.png'
       }

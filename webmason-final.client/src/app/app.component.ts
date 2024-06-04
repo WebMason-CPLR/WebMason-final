@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { ServerService } from './services/server.service';
+import { MessageService } from 'primeng/api';
 
 interface WeatherForecast {
   date: string;
@@ -19,7 +21,7 @@ interface WeatherForecast {
 export class AppComponent implements OnInit {
   public forecasts: WeatherForecast[] = [];
   items: MenuItem[] = [];
-  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {}
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router, private serveurService : ServerService, private messageService : MessageService) {}
 
   ngOnInit() {
 
@@ -50,9 +52,19 @@ export class AppComponent implements OnInit {
     ];
   }
 
-  logout() {
+  deleteAllContainers(): void {
+    this.serveurService.deleteAllContainers().subscribe(
+      response => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'All containers deleted successfully' });
+      },
+      error => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error deleting containers' });
+      }
+    );
+  }
+
+  logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 
   isLoggedIn() {

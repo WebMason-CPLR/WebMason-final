@@ -7,6 +7,9 @@
         public DateTime OrderDate { get; set; }
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
+        public string MySQLContainerId { get; set; } // ID du conteneur MySQL
+        public string WordPressContainerId { get; set; } // ID du conteneur WordPress
     }
 }
+
 
