@@ -24,33 +24,76 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient, private authService: AuthService, private router: Router, private serveurService : ServerService, private messageService : MessageService) {}
 
   ngOnInit() {
+    this.authService.loggedIn$.subscribe(loggedIn => {
+      this.updateMenuItems(loggedIn);
+    });
 
-    this.items = [
-      {
-        label: 'Accueil',
-        icon: 'pi pi-fw pi-home',
-        routerLink: ['/']
-      },
-      {
-        label: 'Inscription',
-        icon: 'pi pi-fw pi-info',
-        routerLink: ['/register']
-      },
-      {
-        label: 'Connexion',
-        icon: 'pi pi-fw pi-envelope',
-        routerLink: ['/login']
-      },
-      {
-        label: 'Settings',
-        icon: 'pi pi-fw pi-cog',
-        items: [
-          { label: 'Profile', icon: 'pi pi-fw pi-user', routerLink: ['/profile'] },
-          { label: 'Security', icon: 'pi pi-fw pi-lock', routerLink: ['/security'] }
-        ]
-      }
-    ];
+    this.updateMenuItems(this.isLoggedIn());
+
+    //this.items = [
+    //  {
+    //    label: 'Inscription',
+    //    icon: 'pi pi-fw pi-info',
+    //    routerLink: ['/register']
+    //  },
+    //  {
+    //    label: 'Connexion',
+    //    icon: 'pi pi-fw pi-envelope',
+    //    routerLink: ['/login']
+    //  },
+    //];
+
+    //if(this.isLoggedIn()) {
+    //  this.items.unshift(
+    //    {
+    //      label: 'Accueil',
+    //      icon: 'pi pi-fw pi-home',
+    //      routerLink: ['/']
+    //    },
+    //    {
+    //      label: 'Mes services',
+    //      icon: 'pi pi-fw pi-list',
+    //      routerLink: ['/containers']
+    //    },
+    //  );
+    //}
   }
+
+  updateMenuItems(loggedIn: boolean): void {
+    if (loggedIn) {
+      this.items = [
+        {
+          label: 'Accueil',
+          icon: 'pi pi-fw pi-home',
+          routerLink: ['/']
+        },
+        {
+          label: 'Mes services',
+          icon: 'pi pi-fw pi-list',
+          routerLink: ['/containers']
+        },
+        {
+          label: 'Déconnexion',
+          icon: 'pi pi-fw pi-sign-out',
+          command: () => this.logout()
+        }
+      ];
+    } else {
+      this.items = [
+        {
+          label: 'Inscription',
+          icon: 'pi pi-fw pi-info',
+          routerLink: ['/register']
+        },
+        {
+          label: 'Connexion',
+          icon: 'pi pi-fw pi-envelope',
+          routerLink: ['/login']
+        }
+      ];
+    }
+  }
+
 
   deleteAllContainers(): void {
     this.serveurService.deleteAllContainers().subscribe(

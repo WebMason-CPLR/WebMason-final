@@ -23,6 +23,6 @@ export class ServerService {
   }
 
   deleteContainer(containerId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/delete/${containerId}`);
+    return this.http.delete(`${this.apiUrl}/delete/${containerId}`);
   }
 }

@@ -5,6 +5,7 @@ namespace WebMason_final.Server.Models
     public class ServerOrder
     {
         public Guid Id { get; set; } // Clé primaire
+
         [JsonPropertyName("serverType")]
         public string ServerType { get; set; }
 
@@ -22,7 +23,11 @@ namespace WebMason_final.Server.Models
 
         [JsonPropertyName("wordpresscontainerid")]
         public string WordPressContainerId { get; set; } // ID du conteneur WordPress
+
+        [JsonPropertyName("mysqlport")]
+        public int MySQLPort { get; set; } // Port utilisé par MySQL
+
+        [JsonPropertyName("wordpressport")]
+        public int WordPressPort { get; set; } // Port utilisé par WordPress
     }
 }
-
-

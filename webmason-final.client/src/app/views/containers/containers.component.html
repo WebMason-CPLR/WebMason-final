@@ -1,18 +1,26 @@
 <p-table [value]="containers">
   <ng-template pTemplate="header">
     <tr>
-      <th>Server Type</th>
-      <th>Order Date</th>
-      <th>Actions</th>
+      <th class="header-column">Server Type</th>
+      <th class="header-column">WordPress Port</th>
+      <th class="header-column">MySQL Port</th>
+      <th class="header-column">Order Date</th>
+      <th class="header-column">Actions</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-container>
     <tr>
-      <td>{{ container.serverType }}</td>
-      <td>{{ container.orderDate | date }}</td>
-      <td>
-        <button pButton type="button" icon="pi pi-trash" (click)="deleteContainer(container.wordpresscontainerid)"></button>
+      <td class="body-column">{{ container.serverType }}</td>
+      <td class="body-column">{{ container.wordpressport }}</td>
+      <td class="body-column">{{ container.mysqlport }}</td>
+      <td class="body-column">{{ container.orderdate | date:'short' }}</td> <!-- Utilisation de la pipe date d'Angular -->
+      <td class="body-column">
+        <button pButton type="button" icon="pi pi-trash" (click)="deleteContainer(container.id)"></button>
       </td>
     </tr>
   </ng-template>
 </p-table>
+<div *ngIf="loading" class="text-center">
+  <p-progressSpinner></p-progressSpinner>
+  <p>Chargement ...</p>
+</div>

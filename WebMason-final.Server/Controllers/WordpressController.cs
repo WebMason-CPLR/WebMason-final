@@ -95,12 +95,12 @@ namespace WebMason_final.Server.Controllers
                     Image = "mysql:5.7",
                     Name = contnameMySQL,
                     Env = new List<string>
-                    {
-                        $"MYSQL_ROOT_PASSWORD={model.MysqlRootPassword}",
-                        $"MYSQL_DATABASE={model.MysqlDatabase}",
-                        $"MYSQL_USER={model.MysqlUser}",
-                        $"MYSQL_PASSWORD={model.MysqlPassword}"
-                    },
+            {
+                $"MYSQL_ROOT_PASSWORD={model.MysqlRootPassword}",
+                $"MYSQL_DATABASE={model.MysqlDatabase}",
+                $"MYSQL_USER={model.MysqlUser}",
+                $"MYSQL_PASSWORD={model.MysqlPassword}"
+            },
                     HostConfig = new HostConfig
                     {
                         NetworkMode = netname,
@@ -113,9 +113,12 @@ namespace WebMason_final.Server.Controllers
 
                 await _dockerClient.Containers.StartContainerAsync(mysqlContainer.ID, new ContainerStartParameters());
 
+                // Récupérez le "hostname" du conteneur MySQL après démarrage
+                var mysqlContainerInfo = await _dockerClient.Containers.InspectContainerAsync(mysqlContainer.ID);
+                var mysqlHostname = mysqlContainerInfo.Config.Hostname;
+
                 // Réinitialisez la liste des conteneurs pour le conteneur WordPress
                 containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters { All = true });
-
 
                 // Réinitialisez le compteur pour le conteneur WordPress
                 counter = 1;
@@ -131,23 +134,27 @@ namespace WebMason_final.Server.Controllers
                     Image = "wordpress:latest",
                     Name = contnameWordpress,
                     Env = new List<string>
-                    {
-                        $"WORDPRESS_DB_HOST={contnameMySQL}",
-                        $"WORDPRESS_DB_NAME={model.MysqlDatabase}",
-                        $"WORDPRESS_DB_USER={model.MysqlUser}",
-                        $"WORDPRESS_DB_PASSWORD={model.MysqlPassword}"
-                    },
+            {
+                $"WORDPRESS_DB_HOST={mysqlHostname}",
+                $"WORDPRESS_DB_NAME={model.MysqlDatabase}",
+                $"WORDPRESS_DB_USER={model.MysqlUser}",
+                $"WORDPRESS_DB_PASSWORD={model.MysqlPassword}"
+            },
                     HostConfig = new HostConfig
                     {
                         NetworkMode = netname,
                         PortBindings = new Dictionary<string, IList<PortBinding>>
-                        {
-                            { "80/tcp", new List<PortBinding> { new PortBinding { HostPort = availableWordPressPort.ToString() } } }
-                        }
+                {
+                    { "80/tcp", new List<PortBinding> { new PortBinding { HostPort = availableWordPressPort.ToString() } } }
+                }
                     }
                 });
 
                 await _dockerClient.Containers.StartContainerAsync(wordpressContainer.ID, new ContainerStartParameters());
+
+                // Récupérez le "hostname" du conteneur WordPress après démarrage
+                var wordpressContainerInfo = await _dockerClient.Containers.InspectContainerAsync(wordpressContainer.ID);
+                var wordpressHostname = wordpressContainerInfo.Config.Hostname;
 
                 // Enregistrez une entrée dans la base de données
                 var serverOrder = new ServerOrder
@@ -157,19 +164,23 @@ namespace WebMason_final.Server.Controllers
                     OrderDate = DateTime.UtcNow,
                     UserId = userId,
                     User = user,
-                    MySQLContainerId = mysqlContainer.ID,
-                    WordPressContainerId = wordpressContainer.ID
+                    MySQLContainerId = mysqlHostname,
+                    WordPressContainerId = wordpressHostname,
+                    MySQLPort = availableMySQLPort,
+                    WordPressPort = availableWordPressPort
                 };
                 _context.ServerOrders.Add(serverOrder);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { Message = "WordPress deployed successfully", WordPressPort = availableWordPressPort, MySQLPort = availableMySQLPort });
+                return Ok(new { Message = $"WordPress déployé avec succès sur le port : {availableWordPressPort}", WordPressPort = availableWordPressPort, MySQLPort = availableMySQLPort });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error deploying WordPress", error = ex.Message });
+                return StatusCode(500, new { message = "Erreur lors du déploiement de conteneurs", error = ex.Message });
             }
         }
+
+
 
 
         [HttpDelete("delete-all")]
@@ -178,37 +189,64 @@ namespace WebMason_final.Server.Controllers
             try
             {
                 // a utiliser pour supprimer tous les conteneurs de la base de données
-                //_context.RemoveRange(_context.ServerOrders);
+                _context.RemoveRange(_context.ServerOrders);
 
-                var jwtHandler = new JwtSecurityTokenHandler();
-                var token = jwtHandler.ReadToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", "")) as JwtSecurityToken;
-                var userId = Guid.Parse(token.Claims.First(claim => claim.Type == "nameid").Value);
+                //var jwtHandler = new JwtSecurityTokenHandler();
+                //var token = jwtHandler.ReadToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", "")) as JwtSecurityToken;
+                //var userId = Guid.Parse(token.Claims.First(claim => claim.Type == "nameid").Value);
 
-                // Récupérer l'utilisateur à partir de la base de données
-                var user = await _context.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    return Unauthorized();
-                }
+                //// Récupérer l'utilisateur à partir de la base de données
+                //var user = await _context.Users.FindAsync(userId);
+                //if (user == null)
+                //{
+                //    return Unauthorized();
+                //}
 
-                // Récupérer tous les conteneurs appartenant à cet utilisateur
-                var userContainers = await _context.ServerOrders
-                    .Where(so => so.UserId == userId)
-                    .ToListAsync();
+                //// Récupérer tous les conteneurs appartenant à cet utilisateur
+                //var userContainers = await _context.ServerOrders
+                //    .Where(so => so.UserId == userId)
+                //    .ToListAsync();
 
-                foreach (var container in userContainers)
-                {
-                    // Arrêter et supprimer le conteneur
-                    await _dockerClient.Containers.StopContainerAsync(container.WordPressContainerId, new ContainerStopParameters());
-                    await _dockerClient.Containers.RemoveContainerAsync(container.WordPressContainerId, new ContainerRemoveParameters { Force = true });
+                //foreach (var container in userContainers)
+                //{
+                //    // Arrêter et supprimer le conteneur WordPress
+                //    await _dockerClient.Containers.StopContainerAsync(container.WordPressContainerId, new ContainerStopParameters());
+                //    await _dockerClient.Containers.RemoveContainerAsync(container.WordPressContainerId, new ContainerRemoveParameters { Force = true });
 
-                    // Arrêter et supprimer le conteneur
-                    await _dockerClient.Containers.StopContainerAsync(container.MySQLContainerId, new ContainerStopParameters());
-                    await _dockerClient.Containers.RemoveContainerAsync(container.MySQLContainerId, new ContainerRemoveParameters { Force = true });
+                //    // Arrêter et supprimer le conteneur MySQL
+                //    await _dockerClient.Containers.StopContainerAsync(container.MySQLContainerId, new ContainerStopParameters());
+                //    await _dockerClient.Containers.RemoveContainerAsync(container.MySQLContainerId, new ContainerRemoveParameters { Force = true });
 
-                    // Supprimer l'entrée de la base de données
-                    _context.ServerOrders.Remove(container);
-                }
+                //    // Supprimer les volumes associés aux conteneurs
+                //    var containerDetails = await _dockerClient.Containers.InspectContainerAsync(container.WordPressContainerId);
+                //    foreach (var mount in containerDetails.Mounts)
+                //    {
+                //        if (mount.Type == "volume")
+                //        {
+                //            await _dockerClient.Volumes.RemoveAsync(mount.Name, force: true);
+                //        }
+                //    }
+
+                //    containerDetails = await _dockerClient.Containers.InspectContainerAsync(container.MySQLContainerId);
+                //    foreach (var mount in containerDetails.Mounts)
+                //    {
+                //        if (mount.Type == "volume")
+                //        {
+                //            await _dockerClient.Volumes.RemoveAsync(mount.Name, force: true);
+                //        }
+                //    }
+
+                //    // Supprimer le réseau associé
+                //    string networkName = "network-" + container.UserId;
+                //    var networks = await _dockerClient.Networks.ListNetworksAsync(new NetworksListParameters { Filters = new Dictionary<string, IDictionary<string, bool>> { { "name", new Dictionary<string, bool> { { networkName, true } } } } });
+                //    if (networks.Count > 0)
+                //    {
+                //        await _dockerClient.Networks.DeleteNetworkAsync(networks[0].ID);
+                //    }
+
+                //    // Supprimer l'entrée de la base de données
+                //    _context.ServerOrders.Remove(container);
+                //}
 
                 await _context.SaveChangesAsync();
 
@@ -219,6 +257,7 @@ namespace WebMason_final.Server.Controllers
                 return StatusCode(500, new { message = "Error deleting containers", error = ex.Message });
             }
         }
+
 
         [HttpGet("user-containers")]
         public async Task<IActionResult> GetUserContainers()
@@ -242,8 +281,8 @@ namespace WebMason_final.Server.Controllers
             }
         }
 
-        [HttpGet("delete/{containerId}")]
-        public async Task<IActionResult> DeleteContainer(Guid containerId)
+        [HttpDelete("delete/{serverOrderId}")]
+        public async Task<IActionResult> DeleteContainer(Guid serverOrderId)
         {
             try
             {
@@ -251,19 +290,53 @@ namespace WebMason_final.Server.Controllers
                 var token = jwtHandler.ReadToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", "")) as JwtSecurityToken;
                 var userId = Guid.Parse(token.Claims.First(claim => claim.Type == "nameid").Value);
 
-                var container = await _context.ServerOrders
-                    .FirstOrDefaultAsync(so => so.Id == containerId && so.UserId == userId);
+                var serverOrder = await _context.ServerOrders
+                    .FirstOrDefaultAsync(so => so.Id == serverOrderId && so.UserId == userId);
 
-                if (container == null)
+                if (serverOrder == null)
                 {
                     return NotFound();
                 }
 
-                // Arrêter et supprimer les conteneurs associés
-                await _dockerClient.Containers.StopContainerAsync(containerId.ToString(), new ContainerStopParameters());
-                await _dockerClient.Containers.RemoveContainerAsync(containerId.ToString(), new ContainerRemoveParameters { Force = true });
+                // Récupérer les IDs des conteneurs MySQL et WordPress
+                var mysqlContainerId = serverOrder.MySQLContainerId;
+                var wordpressContainerId = serverOrder.WordPressContainerId;
+                string netname = "network-" + userId.ToString();
 
-                _context.ServerOrders.Remove(container);
+                // Arrêter et supprimer le conteneur MySQL
+                if (!string.IsNullOrEmpty(mysqlContainerId))
+                {
+                    await _dockerClient.Containers.StopContainerAsync(mysqlContainerId, new ContainerStopParameters());
+                    await _dockerClient.Containers.RemoveContainerAsync(mysqlContainerId, new ContainerRemoveParameters { Force = true });
+                }
+
+                // Arrêter et supprimer le conteneur WordPress
+                if (!string.IsNullOrEmpty(wordpressContainerId))
+                {
+                    await _dockerClient.Containers.StopContainerAsync(wordpressContainerId, new ContainerStopParameters());
+                    await _dockerClient.Containers.RemoveContainerAsync(wordpressContainerId, new ContainerRemoveParameters { Force = true });
+                }
+
+                // Supprimer les volumes associés aux conteneurs
+                var volumes = await _dockerClient.Volumes.ListAsync();
+                foreach (var volume in volumes.Volumes)
+                {
+                    if (volume.Mountpoint.Contains(mysqlContainerId) || volume.Mountpoint.Contains(wordpressContainerId))
+                    {
+                        await _dockerClient.Volumes.RemoveAsync(volume.Name, force: true);
+                    }
+                }
+
+                // Supprimer le réseau associé
+                var networks = await _dockerClient.Networks.ListNetworksAsync(new NetworksListParameters());
+                var network = networks.FirstOrDefault(n => n.Name == netname);
+                if (network != null)
+                {
+                    await _dockerClient.Networks.DeleteNetworkAsync(network.ID);
+                }
+
+                // Supprimer l'entrée de la base de données
+                _context.ServerOrders.Remove(serverOrder);
                 await _context.SaveChangesAsync();
 
                 return Ok(new { Message = "Container deleted successfully" });
@@ -273,6 +346,8 @@ namespace WebMason_final.Server.Controllers
                 return StatusCode(500, new { message = "Error deleting container", error = ex.Message });
             }
         }
+
+
 
 
         private async Task PullImageIfNotExists(string imageName)

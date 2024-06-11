@@ -22,39 +22,39 @@ export class HomeComponent implements OnInit {
       },
       {
         name: 'Serveur Odoo',
-        description: 'An advanced server for larger projects.',
+        description: 'Un serveur simple déployant un Odoo prêt à être configuré',
         image: 'assets/images/advanced-server.png'
       },
       {
-        name: 'Serveur redmine',
-        description: 'A professional server for enterprise solutions.',
+        name: 'Serveur Redmine',
+        description: 'Un serveur simple déployant un Redmine² prêt à être configuré',
         image: 'assets/images/pro-server.png'
       }
     ];
   }
 
-  orderServer(server: any): void {
+  orderWordpressServer(server: any): void {
     this.loading = true;
     const config = {
-      UserId: 'some-user-id',  // Remplacez par l'ID utilisateur réel
+      UserId: 'some-user-id',  // sera remplacé par l'id de l'utilisateur connecté
       MysqlRootPassword: 'rootpassword',
       MysqlDatabase: 'wordpress',
       MysqlUser: 'wpuser',
       MysqlPassword: 'wppassword',
-      HostPort: 8080
+      HostPort: 8080 // sera remplacé par un port disponible côté serveur
     };
 
     this.serverService.deployWordpress(config).subscribe(
       response => {
-        console.log('WordPress deployed successfully', response);
+        console.log('Wordpress déployé avec succès, retrouvez les infos sur votre service dans la page "Mes services"', response);
         this.loading = false;
-        alert('WordPress deployed successfully');
-        // You can navigate to a different page if needed
+        alert('Wordpress déployé avec succès, retrouvez les infos sur votre service dans la page "Mes services"');
+        this.router.navigate(['/containers']);
       },
       error => {
         console.error('Error deploying WordPress', error);
         this.loading = false;
-        alert('Error deploying WordPress');
+        alert('Erreur lors du déploiement de votre service, veuillez contacter le service technique');
       }
     );
   }

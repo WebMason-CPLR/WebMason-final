@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 })
 export class ContainersComponent implements OnInit {
   containers: any[] = [];
+  loading: boolean = false;
 
   constructor(
     private serverService: ServerService,
@@ -20,6 +21,7 @@ export class ContainersComponent implements OnInit {
   }
 
   loadContainers(): void {
+    this.loading = true;
     this.serverService.getUserContainers().subscribe(
       data => {
         console.log(data);
@@ -29,9 +31,11 @@ export class ContainersComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error loading containers' });
       }
     );
+    this.loading = false;
   }
 
   deleteContainer(containerId: string): void {
+    this.loading = true;
     for (let container of this.containers) {
       console.log(container);
     }
@@ -45,5 +49,6 @@ export class ContainersComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error deleting container' });
       }
     );
+    this.loading = false;
   }
 }

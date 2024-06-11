@@ -1,13 +1,13 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-12 text-center">
-      <h1>Choose Your Server</h1>
-      <p class="lead">Select from the different types of servers we offer.</p>
+      <h1>Choisissez votre service</h1>
+      <p class="lead">Sélectionnez parmi les services que nous offrons</p>
     </div>
   </div>
   <div *ngIf="loading" class="text-center">
     <p-progressSpinner></p-progressSpinner>
-    <p>Deploying server, please wait...</p>
+    <p>Déploiement de votre service, veuillez patienter...</p>
   </div>
   <div *ngIf="!loading" class="row mt-4">
     <div class="col-md-4" *ngFor="let server of servers">
@@ -16,7 +16,9 @@
         <div class="card-body">
           <h5 class="card-title">{{ server.name }}</h5>
           <p class="card-text">{{ server.description }}</p>
-          <button pButton type="button" label="Order Now" icon="pi pi-shopping-cart" (click)="orderServer(server)"></button>
+          <button *ngIf="server.name === 'Serveur Wordpress'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
+          <button *ngIf="server.name === 'Serveur Odoo'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
+          <button *ngIf="server.name === 'Serveur Redmine'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
         </div>
       </div>
     </div>

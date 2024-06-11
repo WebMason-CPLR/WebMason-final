@@ -1,0 +1,9 @@
+.header-column, .body-column {
+  width: 25%; /* Adjust the width as per your requirement */
+  text-align: center; /* Center align the text */
+}
+
+/* Optionally, add some padding for better spacing */
+.header-column, .body-column {
+  padding: 8px;
+}
