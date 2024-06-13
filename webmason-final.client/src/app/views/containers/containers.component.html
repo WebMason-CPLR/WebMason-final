@@ -1,21 +1,43 @@
 <p-table [value]="containers">
   <ng-template pTemplate="header">
     <tr>
-      <th class="header-column">Server Type</th>
-      <th class="header-column">WordPress Port</th>
-      <th class="header-column">MySQL Port</th>
-      <th class="header-column">Order Date</th>
+      <th class="header-column">Type de service</th>
+      <th class="header-column">Port service</th>
+      <th class="header-column">Port BDD</th>
+      <th class="header-column">Date de commande</th>
       <th class="header-column">Actions</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-container>
     <tr>
       <td class="body-column">{{ container.serverType }}</td>
-      <td class="body-column">{{ container.wordpressport }}</td>
-      <td class="body-column">{{ container.mysqlport }}</td>
-      <td class="body-column">{{ container.orderdate | date:'short' }}</td> <!-- Utilisation de la pipe date d'Angular -->
       <td class="body-column">
-        <button pButton type="button" icon="pi pi-trash" (click)="deleteContainer(container.id)"></button>
+        <ng-container *ngIf="container.serverType === 'WordPress'">
+          <a [href]="'http://webmason.fr:' + container.wordpressport" target="_blank">
+            http://webmason.fr:{{ container.wordpressport }}
+          </a>
+        </ng-container>
+        <ng-container *ngIf="container.serverType === 'Odoo'">
+          <a [href]="'http://webmason.fr:' + container.odooport" target="_blank">
+            http://webmason.fr:{{ container.odooport }}
+          </a>
+        </ng-container>
+        <ng-container *ngIf="container.serverType === 'Redmine'">
+          <a [href]="'http://webmason.fr:' + container.redmineport" target="_blank">
+            http://webmason.fr:{{ container.redmineport }}
+          </a>
+        </ng-container>
+      </td>
+      <td class="body-column">
+        <ng-container *ngIf="container.serverType === 'WordPress' || container.serverType === 'Redmine'">{{ container.mysqlport }}</ng-container>
+        <ng-container *ngIf="container.serverType === 'Odoo'">{{ container.odoopostgresqlport }}</ng-container>
+        <ng-container *ngIf="container.serverType === 'Redmine'">{{ container.redminemysqlport }}</ng-container>
+      </td>
+      <td class="body-column">{{ container.orderdate | date:'short' }}</td>
+      <td class="body-column">
+        <button pButton type="button" icon="pi pi-trash"
+                (click)="deleteContainer(getContainerId(container))"
+                [disabled]="loading"></button>
       </td>
     </tr>
   </ng-template>

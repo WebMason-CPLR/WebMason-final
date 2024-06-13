@@ -17,8 +17,8 @@
           <h5 class="card-title">{{ server.name }}</h5>
           <p class="card-text">{{ server.description }}</p>
           <button *ngIf="server.name === 'Serveur Wordpress'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
-          <button *ngIf="server.name === 'Serveur Odoo'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
-          <button *ngIf="server.name === 'Serveur Redmine'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderWordpressServer(server)"></button>
+          <button *ngIf="server.name === 'Serveur Odoo'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderOdooServer(server)"></button>
+          <button *ngIf="server.name === 'Serveur Redmine'" pButton type="button" label="Commander ce service" icon="pi pi-shopping-cart" (click)="orderRedmineServer(server)"></button>
         </div>
       </div>
     </div>

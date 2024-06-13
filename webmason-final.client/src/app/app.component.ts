@@ -99,9 +99,11 @@ export class AppComponent implements OnInit {
     this.serveurService.deleteAllContainers().subscribe(
       response => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'All containers deleted successfully' });
+        this.router.navigate(['/containers']);
       },
       error => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error deleting containers' });
+        this.router.navigate(['/containers']);
       }
     );
   }

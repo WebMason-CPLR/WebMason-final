@@ -5,7 +5,6 @@ namespace WebMason_final.Server.Models
     public class ServerOrder
     {
         public Guid Id { get; set; } // Clé primaire
-
         [JsonPropertyName("serverType")]
         public string ServerType { get; set; }
 
@@ -25,9 +24,33 @@ namespace WebMason_final.Server.Models
         public string WordPressContainerId { get; set; } // ID du conteneur WordPress
 
         [JsonPropertyName("mysqlport")]
-        public int MySQLPort { get; set; } // Port utilisé par MySQL
+        public int MySQLPort { get; set; } // Port MySQL
 
         [JsonPropertyName("wordpressport")]
-        public int WordPressPort { get; set; } // Port utilisé par WordPress
+        public int WordPressPort { get; set; } // Port WordPress
+
+        [JsonPropertyName("odoocontainerid")]
+        public string OdooContainerId { get; set; } // ID du conteneur Odoo
+
+        [JsonPropertyName("odoopostgresqlcontainerid")]
+        public string OdooPostgreSQLContainerId { get; set; } // ID du conteneur PostgreSQL pour Odoo
+
+        [JsonPropertyName("odoopostgresqlport")]
+        public int OdooPostgreSQLPort { get; set; } // Port PostgreSQL pour Odoo
+
+        [JsonPropertyName("odooport")]
+        public int OdooPort { get; set; } // Port Odoo
+
+        [JsonPropertyName("redminecontainerid")]
+        public string RedmineContainerId { get; set; } // ID du conteneur Redmine
+
+        [JsonPropertyName("redminemysqlcontainerid")]
+        public string RedmineMySQLContainerId { get; set; } // ID du conteneur MySQL pour Redmine
+
+        [JsonPropertyName("redminemysqlport")]
+        public int RedmineMySQLPort { get; set; } // Port MySQL pour Redmine
+
+        [JsonPropertyName("redmineport")]
+        public int RedminePort { get; set; } // Port Redmine
     }
 }

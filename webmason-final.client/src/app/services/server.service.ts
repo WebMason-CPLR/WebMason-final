@@ -25,4 +25,12 @@ export class ServerService {
   deleteContainer(containerId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${containerId}`);
   }
+
+  deployOdoo(config: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/deploy-odoo`, config);
+  }
+
+  deployRedmine(config: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/deploy-redmine`, config);
+  }
 }
