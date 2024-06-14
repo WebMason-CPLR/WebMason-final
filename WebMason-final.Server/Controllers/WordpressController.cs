@@ -613,6 +613,10 @@ namespace WebMason_final.Server.Controllers
 
                 string netname = "network-" + userId.ToString();
 
+                // Supprimer l'entrée de la base de données
+                _context.ServerOrders.Remove(serverOrder);
+                await _context.SaveChangesAsync();
+
                 // Suppression des conteneurs en fonction du type de service
                 if (serverOrder.ServerType == "WordPress")
                 {
@@ -627,9 +631,7 @@ namespace WebMason_final.Server.Controllers
                     await DeleteContainersAndResources(serverOrder.RedmineContainerId, serverOrder.MySQLContainerId, netname);
                 }
 
-                // Supprimer l'entrée de la base de données
-                _context.ServerOrders.Remove(serverOrder);
-                await _context.SaveChangesAsync();
+                
 
                 return Ok(new { Message = "Container deleted successfully" });
             }
@@ -656,22 +658,22 @@ namespace WebMason_final.Server.Controllers
             }
 
             // Supprimer les volumes associés aux conteneurs
-            var volumes = await _dockerClient.Volumes.ListAsync();
-            foreach (var volume in volumes.Volumes)
-            {
-                if (volume.Mountpoint.Contains(mainContainerId) || volume.Mountpoint.Contains(dbContainerId))
-                {
-                    await _dockerClient.Volumes.RemoveAsync(volume.Name, force: true);
-                }
-            }
+            //var volumes = await _dockerClient.Volumes.ListAsync();
+            //foreach (var volume in volumes.Volumes)
+            //{
+            //    if (volume.Mountpoint.Contains(mainContainerId) || volume.Mountpoint.Contains(dbContainerId))
+            //    {
+            //        await _dockerClient.Volumes.RemoveAsync(volume.Name, force: true);
+            //    }
+            //}
 
-            // Supprimer le réseau associé
-            var networks = await _dockerClient.Networks.ListNetworksAsync(new NetworksListParameters());
-            var network = networks.FirstOrDefault(n => n.Name == networkName);
-            if (network != null)
-            {
-                await _dockerClient.Networks.DeleteNetworkAsync(network.ID);
-            }
+            //// Supprimer le réseau associé
+            //var networks = await _dockerClient.Networks.ListNetworksAsync(new NetworksListParameters());
+            //var network = networks.FirstOrDefault(n => n.Name == networkName);
+            //if (network != null)
+            //{
+            //    await _dockerClient.Networks.DeleteNetworkAsync(network.ID);
+            //}
         }
 
 

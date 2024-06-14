@@ -7,6 +7,7 @@ using WebMason_final.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,13 @@ builder.Services.AddAuthentication(options =>
 
 // Ajoutez le service de hachage de mot de passe
 builder.Services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+
+
+// Configurer les services Stripe
+var stripeSettings = builder.Configuration.GetSection("Stripe");
+StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
+
+builder.Services.Configure<StripeSettings>(stripeSettings);
 
 var app = builder.Build();
 

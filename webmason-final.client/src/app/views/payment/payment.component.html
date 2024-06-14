@@ -1,0 +1,10 @@
+<form [formGroup]="paymentForm" (ngSubmit)="pay()">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input id="name" type="text" formControlName="name" class="form-control">
+  </div>
+  <div id="card-element" class="form-group">
+    <ngx-stripe-card [options]="cardOptions" [elementsOptions]="elementsOptions"></ngx-stripe-card>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="loading">Pay</button>
+</form>

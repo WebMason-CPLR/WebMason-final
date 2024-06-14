@@ -24,6 +24,7 @@
     "@stripe/stripe-js": "^3.5.0",
     "bootstrap": "^5.3.3",
     "jest-editor-support": "*",
+    "ngx-stripe": "^17.2.0",
     "primeicons": "^7.0.0",
     "primeng": "^17.17.0",
     "run-script-os": "*",
