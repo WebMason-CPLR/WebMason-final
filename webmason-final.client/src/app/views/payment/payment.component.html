@@ -1,10 +1,31 @@
-<form [formGroup]="paymentForm" (ngSubmit)="pay()">
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input id="name" type="text" formControlName="name" class="form-control">
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8">
+      <form [formGroup]="paymentForm" (ngSubmit)="pay()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" type="text" formControlName="name" class="form-control">
+        </div>
+        <div id="card-element" class="form-group">
+          <ngx-stripe-card [options]="cardOptions" [elementsOptions]="elementsOptions"></ngx-stripe-card>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">Pay</button>
+      </form>
+      <div *ngIf="loading" class="text-center">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Déploiement de votre service, veuillez patienter...</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Résumé de la commande</h5>
+          <p class="card-text"><strong>Service:</strong> {{ server?.name }}</p>
+          <p class="card-text"><strong>Description:</strong> {{ server?.description }}</p>
+          <p class="card-text"><strong>Prix:</strong> {{ server?.prix }} </p>
+          <img [src]="server?.image" alt="Server image" class="img-fluid">
+        </div>
+      </div>
+    </div>
   </div>
-  <div id="card-element" class="form-group">
-    <ngx-stripe-card [options]="cardOptions" [elementsOptions]="elementsOptions"></ngx-stripe-card>
-  </div>
-  <button type="submit" class="btn btn-primary" [disabled]="loading">Pay</button>
-</form>
+</div>

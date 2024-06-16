@@ -69,32 +69,85 @@ namespace WebMason_final.Server.Controllers
         [HttpPost("process")]
         public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequest paymentRequest)
         {
+            //try
+            //{
+            //    //var options = new ChargeCreateOptions
+            //    //{
+            //    //    Amount = paymentRequest.Amount,
+            //    //    Currency = paymentRequest.Currency,
+            //    //    Description = paymentRequest.Description,
+            //    //    Source = paymentRequest.Token,
+            //    //    Metadata = new Dictionary<string, string>
+            //    //    {
+            //    //        { "ServerType", paymentRequest.ServerType },
+            //    //        { "UserId", paymentRequest.UserId }
+            //    //    }
+            //    //};
+
+            //    //var service = new ChargeService();
+            //    //Charge charge = await service.CreateAsync(options);
+            //    var charge = "succeeded";
+
+            //    if (charge == "succeeded")
+            //    {
+            //        // Payment succeeded, proceed with server deployment
+            //        return Ok(new { success = true, message = "Payment successful" });
+            //    }
+            //    else
+            //    {
+            //        return BadRequest(new { success = false, message = "Payment failed" });
+            //    }
+            //}
+            //catch (StripeException ex)
+            //{
+            //    return BadRequest(new { success = false, message = ex.Message });
+            //}
+
             try
             {
-                //var options = new ChargeCreateOptions
-                //{
-                //    Amount = paymentRequest.Amount,
-                //    Currency = paymentRequest.Currency,
-                //    Description = paymentRequest.Description,
-                //    Source = paymentRequest.Token,
-                //    Metadata = new Dictionary<string, string>
-                //    {
-                //        { "ServerType", paymentRequest.ServerType },
-                //        { "UserId", paymentRequest.UserId }
-                //    }
-                //};
-
-                //var service = new ChargeService();
-                //Charge charge = await service.CreateAsync(options);
-                var charge = "succeeded";
-
-                if (charge == "succeeded")
+                var options = new PaymentIntentCreateOptions
                 {
-                    // Payment succeeded, proceed with server deployment
+                    Amount = paymentRequest.Amount,
+                    Currency = paymentRequest.Currency,
+                    Description = paymentRequest.Description,
+                    AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                    {
+                        Enabled = true,
+                        AllowRedirects = "never"
+                    },
+                    Confirm = true,
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "ServerType", paymentRequest.ServerType },
+                        { "UserId", paymentRequest.UserId }
+                    }
+                };
+
+                options.AddExtraParam("payment_method_data[type]", "card");
+                options.AddExtraParam("payment_method_data[card][token]", $"{paymentRequest.Token}");
+
+
+                var service = new PaymentIntentService();
+                var paymentIntent = await service.CreateAsync(options);
+
+                if (paymentIntent.Status == "requires_action" && paymentIntent.NextAction.Type == "use_stripe_sdk")
+                {
+                    
+                    return Ok(new
+                    {
+                        success = true,
+                        requires_action = true,
+                        payment_intent_client_secret = paymentIntent.ClientSecret
+                    });
+                }
+                else if (paymentIntent.Status == "succeeded")
+                {
+                    
                     return Ok(new { success = true, message = "Payment successful" });
                 }
                 else
                 {
+                    
                     return BadRequest(new { success = false, message = "Payment failed" });
                 }
             }
@@ -102,6 +155,7 @@ namespace WebMason_final.Server.Controllers
             {
                 return BadRequest(new { success = false, message = ex.Message });
             }
+
         }
     }
 

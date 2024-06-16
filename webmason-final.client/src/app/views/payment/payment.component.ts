@@ -81,13 +81,15 @@ export class PaymentComponent implements OnInit {
   }
 
   processPayment(token: string): void {
+    var prix = this.server.prix.replace('€/mois', '');
+
     const paymentRequest = {
       token: token,
-      amount: 1000, // Amount in cents
-      currency: 'usd',
+      amount: prix*100, // en centimes
+      currency: 'eur',
       description: 'Server Deployment',
       serverType: this.server?.name,
-      userId: 'some-user-id' // Replace with actual user ID
+      userId: 'some-user-id'
     };
 
     this.http.post('/api/payment/process', paymentRequest).subscribe((response: any) => {
@@ -111,6 +113,18 @@ export class PaymentComponent implements OnInit {
     } else if (this.server.name === 'Serveur Odoo') {
       this.orderOdooServer();
     } else if (this.server.name === 'Serveur Redmine') {
+      this.orderRedmineServer();
+    } else if (this.server.name === 'Serveur Wordpress pro') {
+      this.orderWordpressServer();
+    } else if (this.server.name === 'Serveur Odoo pro') {
+      this.orderOdooServer();
+    } else if (this.server.name === 'Serveur Redmine pro') {
+      this.orderRedmineServer();
+    } else if (this.server.name === 'Serveur Wordpress ultimate') {
+      this.orderWordpressServer();
+    } else if (this.server.name === 'Serveur Odoo ultimate') {
+      this.orderOdooServer();
+    } else if (this.server.name === 'Serveur Redmine ultimate') {
       this.orderRedmineServer();
     } else {
       console.error('Unknown server type');

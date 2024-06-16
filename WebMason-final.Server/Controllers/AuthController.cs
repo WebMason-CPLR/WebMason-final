@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using WebMason_final.Server.Data;
 using WebMason_final.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using WebMason_final.Server.Utils;
+using Org.BouncyCastle.Crypto.Fpe;
 
 namespace WebMason_final.Server.Controllers
 {
@@ -20,12 +22,14 @@ namespace WebMason_final.Server.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
+        private readonly EmailService _emailService;
 
-        public AuthController(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<ApplicationUser> passwordHasher)
+        public AuthController(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<ApplicationUser> passwordHasher, EmailService emailService)
         {
             _context = context;
             _configuration = configuration;
             _passwordHasher = passwordHasher;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -45,6 +49,9 @@ namespace WebMason_final.Server.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // Envoyer un e-mail après la création du compte
+            await _emailService.SendEmailAsync(model.Email, "Bienvenue sur notre service", "Votre compte WebMason a été créé avec succès.");
 
             return Ok(new { Message = "User registered successfully" });
         }

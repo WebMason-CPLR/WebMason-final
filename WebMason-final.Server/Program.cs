@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Stripe;
+using WebMason_final.Server.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +72,10 @@ var stripeSettings = builder.Configuration.GetSection("Stripe");
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
 builder.Services.Configure<StripeSettings>(stripeSettings);
+
+// Add services to the container.
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddSingleton<EmailService>();
 
 var app = builder.Build();
 
