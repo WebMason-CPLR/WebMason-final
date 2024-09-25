@@ -19,8 +19,9 @@ sudo apt upgrade -y
 
 ```bash
 sudo apt install postgresql postgresql-contrib -y
-Configurer l'utilisateur et la base de données :
 ```
+Configurer l'utilisateur et la base de données :
+
 ```bash
 Copier le code
 sudo -u postgres psql
